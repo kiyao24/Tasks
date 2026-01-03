@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>My Day - ToDo</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100 min-h-screen p-6 font-sans">
+
+    <!-- Main container -->
+<div class="max-w-5xl mx-auto space-y-6">
+
+  <!-- Header -->
+  <div>
+    <h1 class="text-3xl font-bold">My Day</h1>
+    <p id="date" class="text-gray-500"></p>
+  </div>
+
+  <!-- Tasks Grid + Add Task bar inside grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Active Tasks -->
+    <div class="grid grid-rows-[auto_1fr] bg-white rounded-lg shadow p-4">
+      <h2 class="text-lg font-semibold mb-2">Tasks</h2>
+      <ul id="taskList" class="space-y-2 overflow-y-auto max-h-72 pr-1"></ul>
+    </div>
+
+    <!-- Completed Tasks -->
+    <div class="grid grid-rows-[auto_1fr] bg-white rounded-lg shadow p-4">
+      <h2 class="text-lg font-semibold mb-2">Completed Tasks</h2>
+      <ul id="completedList" class="space-y-2 overflow-y-auto max-h-72 pr-1"></ul>
+    </div>
+
+    <!-- Add Task bar → spans only the first column -->
+    <div class="md:col-span-1 mt-2 bg-white rounded-lg shadow p-4">
+      <div class="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3">
+        <input id="taskInput" type="text" placeholder="Add a new task..." class="w-full rounded-md border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+        <button onclick="addTask()" class="rounded-md bg-blue-600 px-6 py-2 text-white font-medium hover:bg-blue-700">Add</button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+
+  <!-- JavaScript -->
+  <script>
+    document.getElementById("date").textContent =
+      new Date().toDateString();
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const li = document.createElement("li");
+      li.className =
+        "flex items-center justify-between rounded-md border px-3 py-2";
+
+      const span = document.createElement("span");
+      span.textContent = text;
+
+      const actions = document.createElement("div");
+      actions.className = "flex gap-2";
+
+      const doneBtn = createBtn("✔", "bg-green-500 hover:bg-green-600", () =>
+        markDone(li, span)
+      );
+
+      const editBtn = createBtn("✏", "bg-yellow-400 hover:bg-yellow-500", () =>
+        editTask(span)
+      );
+
+      const deleteBtn = createBtn("🗑", "bg-red-500 hover:bg-red-600", () =>
+        li.remove()
+      );
+
+      actions.append(doneBtn, editBtn, deleteBtn);
+      li.append(span, actions);
+      document.getElementById("taskList").appendChild(li);
+      input.value = "";
+    }
+
+    function markDone(li, span) {
+      span.classList.add("text-gray-400");
+      li.querySelector("button").remove();
+      document.getElementById("completedList").appendChild(li);
+    }
+
+    function editTask(span) {
+      const text = prompt("Edit task:", span.textContent);
+      if (text?.trim()) span.textContent = text.trim();
+    }
+
+    function createBtn(text, classes, handler) {
+      const btn = document.createElement("button");
+      btn.textContent = text;
+      btn.className =
+        "rounded px-2 py-1 text-white text-sm " + classes;
+      btn.onclick = handler;
+      return btn;
+    }
+  </script>
+
+</body>
+</html>
